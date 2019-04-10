@@ -7,9 +7,9 @@ t=now()
 
 function drawneedle(l)
     p0  = Luxor.Point(1,1)
-    pp1 = Luxor.Point(5,l/2)
+    pp1 = Luxor.Point(5,l/3)
     pp2 = Luxor.Point(0,l)
-    pp3 = Luxor.Point(-5,l/2)
+    pp3 = Luxor.Point(-5,l/3)
     Luxor.setline(3)
     ptlist = [p0,pp1,pp2,pp3]
     ptlist2 = [p0,pp1+(2, 0),pp2,pp3-(2, 0)]
@@ -44,7 +44,7 @@ function drawclock(radius, action=:none)
             Luxor.line(p0,Luxor.Point(0,10), :stroke)
             Luxor.translate(0, -2)
             fontface("Agenda-Black")
-            fontsize(radius/6)
+            fontsize(radius/5)
             Luxor.text("$ht" ,0,0,halign=:center)
             if ht >11
                 ht = 0
@@ -57,7 +57,7 @@ function drawclock(radius, action=:none)
         starsize = radius/10
         Luxor.@layer begin
             Luxor.rotate(theta)
-            Luxor.translate(0, -radius-30)
+            Luxor.translate(0, -radius-20)
             Luxor.sethue("gold3")
             Luxor.star(0,0, starsize,6, 0.5, 0, :fill)
         end
@@ -72,16 +72,17 @@ function drawclock(radius, action=:none)
             Luxor.circle(0,0, 2, :fill)
     end
 
+
+    #draw drawneedle for minutes
+    Luxor.origin()
+    Luxor.rotate(pi+(m*(pi/30)))
+    drawneedle(radius+25)
+
     #draw drawneedle for hour
     quater = h /60
     Luxor.origin()
     Luxor.rotate(pi+(quater + h*(pi/6)))
-    drawneedle(radius-10)
-    #draw drawneedle for minutes
-    Luxor.origin()
-    Luxor.rotate(pi+(m*(pi/30)))
     drawneedle(radius-5)
-
 
     Luxor.origin()
     Luxor.sethue("black")
@@ -89,8 +90,8 @@ function drawclock(radius, action=:none)
     Luxor.sethue("blue")
     fontface("Agenda-Black")
     fontsize(20)
-    Luxor.text(Dates.format(t, "E d U";locale="french"),0,-80,halign=:center)
-    Luxor.text(Dates.format(t, "yyyy"),0,-40,halign=:center)
-    fontsize(40)
+    Luxor.text(Dates.format(t, "E d U";locale="french"),0,-20 ,halign=:center)
+    Luxor.text(Dates.format(t, "yyyy"),0, -40 ,halign=:center)
+    fontsize(30)
     Luxor.text(Dates.format(t, " HH:MM:SS"),0,50,halign=:center)
 end

@@ -1,31 +1,44 @@
-# using Pkg
-# Pkg.add("Gtk")
-# Pkg.add("PackageCompiler")
-# using PackageCompiler
-# build_executable("/home/ygo/julia/GtkLuxorNaiveDemo/alarmclock/alarmClock.jl", "alarmClock","/home/ygo/julia/GtkLuxorNaiveDemo/alarmclock/program.c")
+#=
+using Pkg
+Pkg.generate("jAnalogAlarmClock")
+Pkg.activate("jAnalogAlarmClock")
+Pkg.add(PackageSpec(url="https://github.com/JuliaGraphics/Gtk.jl", rev="master"))
+Pkg.add(PackageSpec(url="https://github.com/JuliaGraphics/Luxor.jl", rev="master"))
+Pkg.add(PackageSpec(url="https://github.com/JuliaGraphics/ColorSchemes.jl", rev="master"))
+=#
 
-module alarmClock
+#=  Compile
+
+using PackageCompiler
+
+build_executable("./jAnalogAlarmClock/src/alarmClock.jl",
+"alarmClock","./jAnalogAlarmClock/src/program.c";
+builddir = "./jAnalogAlarmClock/bin",
+release = true, Release = true)
+
+=#
+module jAnalogAlarmClock
     using Colors, Cairo, Compat, FileIO
     using Gtk
     using Luxor
     global L=Luxor
     include("drawclock.jl")
-    global winx = 333
-    global winy = 333
+    global winx = 260
+    global winy = 260
     global curcolor = "white"
-    global models = ["text", "stars", "eggs","clock","colornames","spiral","strangeloop"]
-    global french_months = ["janvier", "février", "mars", "avril","mai", "juin","juillet", "août", "septembre", "octobre","novembre", "décembre"];
-    global french_monts_abbrev=["janv","févr","mars","avril","mai","juin","juil","août","sept","oct","nov","déc"];
-    global french_days=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
+    # global models = ["text", "stars", "eggs","clock","colornames","spiral","strangeloop"]
+    # global french_months = ["janvier", "février", "mars", "avril","mai", "juin","juillet", "août", "septembre", "octobre","novembre", "décembre"];
+    # global french_monts_abbrev=["janv","févr","mars","avril","mai","juin","juil","août","sept","oct","nov","déc"];
+    # global french_days=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
     # global Dates.LOCALES["french"] = Dates.DateLocale(french_months,french_monts_abbrev,french_days, [""]);
 
     function callClock(tt)
-            drawclock(100)
+            drawclock(60)
             Gtk.draw(c)
     end
     function mydraw()
         L.background(curcolor) # hide
-        drawclock(100)
+        drawclock(60)
     end
     function cbresize(w)
             wdth, hght = screen_size(w)
