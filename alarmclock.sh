@@ -1,0 +1,1 @@
+ nohup julia   -e 'include("src/alarmClock.jl");jAnalogAlarmClock.julia_main([""])' &

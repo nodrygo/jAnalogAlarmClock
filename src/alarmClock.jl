@@ -7,7 +7,7 @@ Pkg.add(PackageSpec(url="https://github.com/JuliaGraphics/Luxor.jl", rev="master
 Pkg.add(PackageSpec(url="https://github.com/JuliaGraphics/ColorSchemes.jl", rev="master"))
 =#
 
-#=  Compile
+#=
 
 using PackageCompiler
 
@@ -96,7 +96,6 @@ module jAnalogAlarmClock
     	    wait(c)
     	end
         return 0
-
     end
 
 # if interactive kill timer when destroy win
@@ -107,3 +106,4 @@ module jAnalogAlarmClock
         end
     end
 end
+# julia  -L alarmClock.jl -e 'jAnalogAlarmClock.julia_main([""])'
