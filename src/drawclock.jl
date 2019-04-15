@@ -92,7 +92,7 @@ function drawclock(radius, action=:none)
     drawneedle(radius+25)
 
     #draw drawneedle for hour
-    deltah = h / 90
+    deltah = m / 90
     Luxor.origin()
     Luxor.rotate(pi+((deltah + h) * (pi/6)))
     drawneedle(radius-15)
