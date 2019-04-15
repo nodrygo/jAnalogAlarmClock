@@ -71,7 +71,7 @@ function drawclock(radius, action=:none)
         Luxor.@layer begin
             Luxor.rotate(theta)
             Luxor.translate(0, -radius-20)
-            Luxor.sethue("gold3")
+            Luxor.sethue("goldenrod4")
             Luxor.star(0,0, starsize,6, 0.5, 0, :fill)
         end
     end
