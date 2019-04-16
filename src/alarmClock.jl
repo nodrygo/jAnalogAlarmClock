@@ -8,13 +8,29 @@ Pkg.add(PackageSpec(url="https://github.com/JuliaGraphics/ColorSchemes.jl", rev=
 =#
 
 #=
-
+##########################
+# WITH PackageCompiler.jl WORK only with modied C code
+##########################
 using PackageCompiler
 
 build_executable("./jAnalogAlarmClock/src/alarmClock.jl",
 "alarmClock","./jAnalogAlarmClock/src/program.c";
 builddir = "./jAnalogAlarmClock/bin",
 release = true, Release = true)
+
+#############################
+# WITH ApplicationBuilder.jl  BUG
+/home/ygo/.julia/packages/PackageCompiler/oT98U/examples/program.c:43:5: internal compiler error: Erreur du bus
+     for (i = 1; i < argc; i++) {
+#############################
+
+Pkg.add(PackageSpec(url="https://github.com/NHDaly/ApplicationBuilder.jl", rev="master"))
+
+using ApplicationBuilder
+build_app_bundle("$(homedir())/julia/jAnalogAlarmClock/src/alarmClock.jl";
+                 builddir="$(homedir())/julia/jAnalogAlarmClock/BINjClock" ,
+                 appname="jClock", verbose=true)
+
 
 =#
 module jAnalogAlarmClock
