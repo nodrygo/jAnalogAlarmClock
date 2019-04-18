@@ -24,12 +24,14 @@ release = true, Release = true)
      for (i = 1; i < argc; i++) {
 #############################
 
-Pkg.add(PackageSpec(url="https://github.com/NHDaly/ApplicationBuilder.jl", rev="master"))
+OLD Pkg.add(PackageSpec(url="https://github.com/NHDaly/ApplicationBuilder.jl", rev="master"))
+Pkg.add(PackageSpec(url="https://github.com/JuliaLang/PackageCompiler.jl/", rev="master"))
 
 using ApplicationBuilder
 build_app_bundle("$(homedir())/julia/jAnalogAlarmClock/src/alarmClock.jl";
                  builddir="$(homedir())/julia/jAnalogAlarmClock/BINjClock" ,
-                 appname="jClock", verbose=true)
+                 appname="jClock", verbose=true,
+                 create_installer=true)
 
 
 =#
@@ -42,11 +44,6 @@ module jAnalogAlarmClock
     global winx = 260
     global winy = 260
     global curcolor = "white"
-    # global models = ["text", "stars", "eggs","clock","colornames","spiral","strangeloop"]
-    # global french_months = ["janvier", "février", "mars", "avril","mai", "juin","juillet", "août", "septembre", "octobre","novembre", "décembre"];
-    # global french_monts_abbrev=["janv","févr","mars","avril","mai","juin","juil","août","sept","oct","nov","déc"];
-    # global french_days=["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
-    # global Dates.LOCALES["french"] = Dates.DateLocale(french_months,french_monts_abbrev,french_days, [""]);
 
     function callClock(tt)
             drawclock(60)
@@ -64,18 +61,39 @@ module jAnalogAlarmClock
     function mainwin()
         # main win
         win = GtkWindow("alarmclock",winx,winy)
+        # screen = get_gtk_property(win, :screen,GdkScreen)
+        # get_gtk_property(screen, :rgba_colormap, GdkColormap)
+        # set_gtk_property!(win, :visual , 0.9)
         vbox = GtkBox(:v)
         #gtk canvas
         global c = Gtk.Canvas(winx,winy)
         # create luxor drawing
         global currentdrawing =  L.Drawing(winx,winy, "alarmClock.png")
         global luxctx = currentdrawing.cr
-        #gtk canvas
-        btnquit  = Gtk.Button("set alarm")
 
-        signal_connect(btnquit, :clicked) do widget
-            exit()
+
+
+        # Define the popup menu
+        popupmenu = Gtk.Menu()
+        setAlarm = Gtk.MenuItem("Set Alarm")
+        switchDeco = Gtk.MenuItem("Switch decoration")
+        push!(popupmenu, setAlarm)
+        push!(popupmenu, switchDeco)
+
+        c.mouse.button3press = (widget,event) -> popup(popupmenu, event)
+
+        signal_connect(setAlarm, :activate) do widget
+            println("open set alarm dialog")
         end
+
+        signal_connect(switchDeco, :activate) do widget
+            if get_gtk_property(win, :decorated, Bool)
+                set_gtk_property!(win, :decorated ,false)
+            else
+                set_gtk_property!(win, :decorated ,true)
+            end
+        end
+
         signal_connect(win, :configure_event ) do widget
             cbresize(win)
         end
@@ -88,15 +106,20 @@ module jAnalogAlarmClock
             Gtk.reveal(c)
         end
 
-        #setproperty!(vbox,:border_width,1)
+        #set_gtk_property!(win, :decorated ,false)
+        set_gtk_property!(win, :opacity , 0.9)
+        # set_gtk_property!(vbox, :opacity , 0.9)
+        set_gtk_property!(c, :opacity , 0.9)
+
         push!(win, vbox)
         push!(vbox, c)
-        push!(vbox, btnquit)
-        showall(win)
-        global tt = Timer(callClock, 1, interval = 1.0)
 
-        #set_gtk_property!(win, :decorated ,false)
-        #set_gtk_property!(c, :opacity , 0.5)
+        showall(win)
+        # This next line is crucial: otherwise your popup menu shows as a thin bar
+        Gtk.showall(popupmenu)
+
+        # create and set timer
+        global tt = Timer(callClock, 1, interval = 1.0)
 
         win
     end
@@ -122,4 +145,3 @@ module jAnalogAlarmClock
         end
     end
 end
-# julia  -L alarmClock.jl -e 'jAnalogAlarmClock.julia_main([""])'
